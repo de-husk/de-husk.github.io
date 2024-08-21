@@ -4,8 +4,8 @@
 }
 
 body {
-    background-color: #c20806;
-    color: #040508;
+    background-color: #00ffae;
+    color: #210009;
 
     font-family: CutiveMono;
     text-align: center;
@@ -39,7 +39,7 @@ table {
 }
 
 tr td {
-    border: 1px solid #040508;
+    border: 1px solid #210009;
 
     padding: 0;
     margin: 0;
