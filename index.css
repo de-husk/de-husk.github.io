@@ -1,0 +1,71 @@
+@font-face {
+    font-family: CutiveMono;
+    src: url('assets/CutiveMono-Regular.ttf');
+}
+
+body {
+    background-color: #c20806;
+    color: #040508;
+
+    font-family: CutiveMono;
+    text-align: center;
+}
+
+h1 {
+    font-size: 100px;
+}
+
+marquee {
+    font-size: larger;
+}
+
+.bottom {
+    position: fixed;
+    bottom: 0;
+}
+
+.top {
+    position: fixed;
+    top: 0;
+}
+
+table {
+    border-collapse: collapse;
+
+    margin: auto;
+    width: 50%;
+
+    margin-bottom: 100px;
+}
+
+tr td {
+    border: 1px solid #040508;
+
+    padding: 0;
+    margin: 0;
+}
+
+img {
+    padding-bottom: 50px;
+    text-align: center;
+}
+
+.content {
+    padding-bottom: 50px;
+}
+
+@media screen and (min-width: 400px) and (max-width: 800px) {
+    h1 {
+        font-size: 80px;
+    }
+
+    .img {
+        padding-bottom: 50px;
+        width: 70%;
+    }
+
+    .content {
+        padding-bottom: 50px;
+    }
+
+}
