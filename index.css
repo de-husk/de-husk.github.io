@@ -4,8 +4,9 @@
 }
 
 body {
-    background-color: #00ffae;
-    color: #210009;
+    background-color: #331632;
+    color: #cde9cd;
+
 
     font-family: CutiveMono;
     text-align: center;
@@ -39,7 +40,7 @@ table {
 }
 
 tr td {
-    border: 1px solid #210009;
+    border: 1px solid #cde9cd;
 
     padding: 0;
     margin: 0;
@@ -48,6 +49,11 @@ tr td {
 img {
     padding-bottom: 50px;
     text-align: center;
+}
+
+a,
+a:visited {
+    color: inherit;
 }
 
 .content {
