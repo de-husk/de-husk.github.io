@@ -48,7 +48,8 @@ tr td {
 
 img {
     padding-bottom: 50px;
-    text-align: center;
+    margin: 0 auto;
+    display: block;
 }
 
 a,
