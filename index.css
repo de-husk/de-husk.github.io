@@ -7,7 +7,6 @@ body {
     background-color: #331632;
     color: #cde9cd;
 
-
     font-family: CutiveMono;
     text-align: center;
 }
@@ -47,9 +46,34 @@ tr td {
 }
 
 img {
-    padding-bottom: 50px;
+    padding: 20px;
     margin: 0 auto;
     display: block;
+}
+
+.bigImg {
+    width: 90%;
+    height: auto;
+    margin: 0 auto;
+    padding: 10px;
+}
+
+
+pre {
+    text-align: left;
+
+    overflow-x: scroll;
+    overflow-y: scroll;
+    background: black;
+    color: LawnGreen;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.code {
+    margin: auto;
+    width: 50%;
+    padding-left: 0px;
 }
 
 a,
