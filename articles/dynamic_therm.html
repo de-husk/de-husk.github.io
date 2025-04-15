@@ -512,7 +512,7 @@
             <p>
                 Then make a new material with the following nodes:
 
-                <img class="bigImg" src="../assets/images/therm_mat.jpg">
+                <img class="bigImg" src="../assets/images/therm_mat.png">
 
                 The `Temp` parameter is a Material Parameter Collection, pointing to the MPC we created in the previous
                 step.
@@ -521,7 +521,7 @@
 
                 <br />
 
-                As `Temp` fluctuates from [-0.5, 0.5] the bar will change from 0 - 100% full
+                As `Temp` fluctuates from [0.0, 1.0] the bar will change from 0 - 100% full
 
             <div class="code">
                 <pre>
@@ -536,8 +536,8 @@ void AThermometer::Tick(float DeltaTime)
         // pci is the MPC we made
         if (pci)
         {
-            // Convert the [0, 100] temp to [-0.5, 0.5]:
-            float matTemp = CurrentTemp / 100.0f - 0.5;
+            // Convert the [0, 100] temp to [0.0 1.0]:
+            float matTemp = CurrentTemp / 100.0f;
 
             pci->SetScalarParameterValue(FName("Temp"), FMath::Lerp(startLerpTemp, matTemp, lerpTimeElapsed / lerpDuration));
 
