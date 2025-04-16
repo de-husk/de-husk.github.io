@@ -475,94 +475,93 @@
                                 TO NB| STORE HBEAMNB| EXIT||# Page 897| TC LRADRET|</marquee>
     </div>
 
-    <h1>Procedural Thermometer</h1>
-    <h3>2023-04-21</h3>
+    <h1>Tips From One Year Of Terraform</h1>
+    <h3>2017-01-16</h3>
 
     <div>
         <div class="content">
-            <p>
-                I couldn't find any tutorials on this, so this is how I made <br> a simple
-                programmatically
-                controlled thermometer in Unreal Engine 5.
-            </p>
 
-            <br />
+            <h2>Recommended project structure</h2>
 
-            <p>
-                <a href="https://www.tiktok.com/@de_husk/video/7224627531482287402">
-                    Demo video</a>
-            </p>
-
-            <br />
-
-            <h2>1. Material Parameter Collection</h2>
-            <p>
-                First make a new <a
-                    href="https://dev.epicgames.com/documentation/en-us/unreal-engine/using-material-parameter-collections-in-unreal-engine">
-                    Material Parameter Collection</a> asset
-
-                <img src="../assets/images/therm_mpc_asset.png">
-
-                Add a new scalar parameter named "Temp" to this new asset.
-            </p>
-
-            <br />
-
-            <h2>2. Material</h2>
-
-            <p>
-                Then make a new material with the following nodes:
-
-                <img class="bigImg" src="../assets/images/therm_mat.png">
-
-                The `Temp` parameter is a Material Parameter Collection, pointing to the MPC we created in the previous
-                step.
-                <br />
-                This allows us to dynamically change this value by changing the `Temp` variable in the MPC at runtime.
-
-                <br />
-
-                As `Temp` fluctuates from [0.0, 1.0] the bar will change from 0 - 100% full
+            At first we tried to separate stage and prod envs by having a structure like so:
 
             <div class="code">
                 <pre>
-// Demo changing thermometer at runtime
-
-void AThermometer::Tick(float DeltaTime)
-{
-    float lerpDuration = 2.0f;
-
-    if (lerpTimeElapsed < lerpDuration)
-    {
-        // pci is the MPC we made
-        if (pci)
-        {
-            // Convert the [0, 100] temp to [0.0 1.0]:
-            float matTemp = CurrentTemp / 100.0f;
-
-            pci->SetScalarParameterValue(FName("Temp"), FMath::Lerp(startLerpTemp, matTemp, lerpTimeElapsed / lerpDuration));
-
-            lerpTimeElapsed += DeltaTime;
-        }
-    }
-}
-            </pre>
+├── service.tf
+├── prod
+│    └── terraform.tfvars
+│    └── .terraform
+└── stage
+     └── terraform.tfvars
+     └── .terraform
+</pre>
             </div>
-            </p>
 
+            This allowed us to share the same terraform file for both staging and production, and besides a minor
+            annoyance with having to manually specify the variable file path when using terraform, it worked smoothly.
+            We were able to make changes to one tf file easily and avoid copy pasting. Notice that we kept separate
+            state files per environment which is a really good thing to do.
 
-            <br />
+            However, We eventually made an effort to start DRYing up different service's Terraform files by using shared
+            Terraform <a href="https://www.terraform.io/docs/modules/index.html">Modules</a>.
+            Once we started doing this, we quickly began to realize that each service's tf file was simply passing
+            variables to modules, which contained the actual setup and config for each resource.
 
-            <p>
-                NOTE: You could create a Dynamic Material Instance instead of using a Material Parameter
-                Collection here but that is more work.
-            </p>
+            Since modules brought down the cost and complexity of maintaining separate tf files for different
+            environments, the infra for our services started to look like this:
 
-            <br />
+            <div class="code">
+                <pre>
+├── prod
+│    ├── service.tf
+│    └── terraform.tfvars
+│    └── .terraform
+└── stage
+    ├── service.tf
+    └── terraform.tfvars
+    └── .terraform
+        </pre>
+            </div>
 
-            <p>
-                Finally, use this Material in your static mesh thermometer asset's thermometer tube material slot.
-            </p>
+            Before, we avoided this structure, because we didn't want to have to copy and paste terraform changes
+            between 2 different tf files. But now we just make the changes in the terraform module that both env's tf
+            file use.
+
+            This is similar to Hashicorp's own <a
+                href="https://github.com/hashicorp/best-practices/tree/master/terraform/providers/aws">best
+                practices</a>. I also
+            recommend a `global` Terraform file for managing things shared between all environments (Which depends on
+            your usage but could be: Route53 Zones/Records, VPC subnets, etc).
+
+            <h2>Tag your resources liberally</h2>
+
+            It is very useful to see inside the aws console or via the api that something is managed in Terraform.
+            I always put at least a `"terraform" = "true"` tag on all of the resources in my terraform modules. An `env`
+            flag is also very useful.
+
+            <h2>Terraforming</h2>
+
+            When we started using Terraform we already had resources defined in AWS. We used <a
+                href="https://github.com/dtan4/terraforming">terraforming</a> to export hundreds of DNS records in
+            seconds, which saved a lot of busy work making the tf files from hand. Some apis are still not implemented
+            in terraforming,
+            but a lot of the aws services have terraforming implementations.
+
+            <h2>Write tests</h2>
+
+            'Infrastructure as code' is a great idea, but if it's really code we should test it like code, right?
+
+            I think the best current way to test terraform is to use <a
+                href="https://github.com/newcontext-oss/kitchen-terraform/blob/master/examples/aws_provider/getting_started.md">kitchen-terraform</a>.
+            The previous link shows an example of how to use it with aws terraform resources.
+
+            <h2>Conditionals!</h2>
+
+            Terraform 0.8 added
+            <a href="https://www.terraform.io/docs/configuration/interpolation.html#conditionals">conditionals</a> Which
+            was desperately needed.
+            Conditional is a ternary operator that can be used in HCL. Before, if you wanted to do something
+            conditionally you had to use a variable and `count` which was pretty awkward.
         </div>
 
         <table>
